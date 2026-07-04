@@ -1,0 +1,17 @@
+{
+  "projectId": "2a48db23-4d48-4c2c-80f7-ef6cad78521f",
+  "type": "frontend",
+  "name": "Travel advice main flow",
+  "description": "Test the core Relo flow: user enters a travel/relocation scenario and receives organized AI-generated advice in tabs",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the homepage" },
+    { "type": "assertion", "description": "Verify the page title 'Relo' and subtitle are visible" },
+    { "type": "action", "description": "Type a travel scenario into the textarea, for example: 'I am Egyptian moving to Germany as a student with a 1000 euro budget'" },
+    { "type": "action", "description": "Click the submit button labeled 'احصل على خطتك'" },
+    { "type": "assertion", "description": "Wait for the loading state to finish and verify a result section appears with tabs" },
+    { "type": "assertion", "description": "Click through each tab and verify each shows non-empty content" },
+    { "type": "assertion", "description": "Verify no error message is displayed after a successful submission" },
+    { "type": "action", "description": "Submit the form with an empty textarea" },
+    { "type": "assertion", "description": "Verify a validation error message appears" }
+  ]
+}
