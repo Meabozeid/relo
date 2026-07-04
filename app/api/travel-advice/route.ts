@@ -1,7 +1,7 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,11 +10,10 @@ export async function POST(req: NextRequest) {
     if (!userInput || userInput.trim().length === 0) {
       return NextResponse.json(
         { error: "من فضلك اكتب وضعك أولاً" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const prompt = `
 أنت مساعد سفر وهجرة ذكي اسمه "Relo". مهمتك تحليل وضع المستخدم التالي وإعطاؤه معلومات عملية ومنظمة.
 
@@ -35,12 +34,13 @@ export async function POST(req: NextRequest) {
 اجعل كل نقطة مختصرة وعملية، واستخدم اللغة العربية.
 `;
 
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
 
-    // تنظيف الرد من أي Markdown code fences لو موجودة
+    const text = response.text ?? "";
     const cleanedText = text.replace(/```json|```/g, "").trim();
-
     const data = JSON.parse(cleanedText);
 
     return NextResponse.json({ success: true, data });
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     console.error("Error generating travel advice:", error);
     return NextResponse.json(
       { error: "حصل خطأ أثناء معالجة طلبك، حاول تاني" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
