@@ -12,12 +12,73 @@ type TravelData = {
   checklist: string[];
 };
 
+type EmergencyData = {
+  police: string;
+  ambulance: string;
+  fire: string;
+  embassyAdvice: string;
+  emergencyPhrases: { arabic: string; local: string }[];
+  generalTip: string;
+};
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState<TravelData | null>(null);
   const [activeTab, setActiveTab] = useState<string>("steps");
+
+  const [showEmergency, setShowEmergency] = useState(false);
+  const [emergencyCountry, setEmergencyCountry] = useState("");
+  const [emergencyNationality, setEmergencyNationality] = useState("");
+  const [emergencyLoading, setEmergencyLoading] = useState(false);
+  const [emergencyError, setEmergencyError] = useState("");
+  const [emergencyData, setEmergencyData] = useState<EmergencyData | null>(
+    null
+  );
+
+  const handleEmergencySubmit = async () => {
+    if (!emergencyCountry.trim()) {
+      setEmergencyError("من فضلك اكتب اسم الدولة");
+      return;
+    }
+
+    setEmergencyLoading(true);
+    setEmergencyError("");
+    setEmergencyData(null);
+
+    try {
+      const res = await fetch("/api/emergency", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          country: emergencyCountry,
+          nationality: emergencyNationality,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        setEmergencyError(result.error || "حصل خطأ، حاول تاني");
+        return;
+      }
+
+      setEmergencyData(result.data);
+    } catch {
+      setEmergencyError("حصل خطأ في الاتصال، حاول تاني");
+    } finally {
+      setEmergencyLoading(false);
+    }
+  };
+
+  const closeEmergency = () => {
+    setShowEmergency(false);
+    setEmergencyCountry("");
+    setEmergencyNationality("");
+    setEmergencyData(null);
+    setEmergencyError("");
+  };
 
   const handleSubmit = async () => {
     if (!input.trim()) {
@@ -68,6 +129,15 @@ export default function Home() {
       className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 px-4 py-10"
     >
       <div className="max-w-2xl mx-auto">
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setShowEmergency(true)}
+            className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-700 transition"
+          >
+            🚨 وضع الطوارئ
+          </button>
+        </div>
+
         <h1 className="text-4xl font-bold text-center text-slate-800 mb-2">
           Relo
         </h1>
@@ -82,9 +152,7 @@ export default function Home() {
             placeholder="مثال: أنا مصري، سأنتقل إلى ألمانيا كطالب، وميزانيتي 1000 يورو"
             className="w-full h-28 p-4 border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-slate-400"
           />
-          {error && (
-            <p className="text-red-500 text-sm mt-2">{error}</p>
-          )}
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <button
             onClick={handleSubmit}
             disabled={loading}
@@ -151,6 +219,111 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {showEmergency && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          onClick={closeEmergency}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-red-600">
+                🚨 وضع الطوارئ
+              </h2>
+              <button
+                onClick={closeEmergency}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            {!emergencyData && (
+              <>
+                <input
+                  type="text"
+                  value={emergencyCountry}
+                  onChange={(e) => setEmergencyCountry(e.target.value)}
+                  placeholder="الدولة اللي أنت فيها الآن (مثال: ألمانيا)"
+                  className="w-full p-3 border border-slate-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+                <input
+                  type="text"
+                  value={emergencyNationality}
+                  onChange={(e) => setEmergencyNationality(e.target.value)}
+                  placeholder="جنسيتك (اختياري)"
+                  className="w-full p-3 border border-slate-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+                {emergencyError && (
+                  <p className="text-red-500 text-sm mb-2">
+                    {emergencyError}
+                  </p>
+                )}
+                <button
+                  onClick={handleEmergencySubmit}
+                  disabled={emergencyLoading}
+                  className="w-full bg-red-600 text-white py-3 rounded-xl font-medium hover:bg-red-700 transition disabled:opacity-50"
+                >
+                  {emergencyLoading ? "جاري البحث..." : "احصل على معلومات الطوارئ"}
+                </button>
+              </>
+            )}
+
+            {emergencyData && (
+              <div className="space-y-4 text-slate-700">
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="bg-red-50 rounded-xl p-3">
+                    <p className="text-xs text-slate-500">الشرطة</p>
+                    <p className="font-bold text-lg">{emergencyData.police}</p>
+                  </div>
+                  <div className="bg-red-50 rounded-xl p-3">
+                    <p className="text-xs text-slate-500">الإسعاف</p>
+                    <p className="font-bold text-lg">
+                      {emergencyData.ambulance}
+                    </p>
+                  </div>
+                  <div className="bg-red-50 rounded-xl p-3">
+                    <p className="text-xs text-slate-500">المطافئ</p>
+                    <p className="font-bold text-lg">{emergencyData.fire}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="font-medium mb-1">🏛️ السفارة</p>
+                  <p className="text-sm">{emergencyData.embassyAdvice}</p>
+                </div>
+
+                <div>
+                  <p className="font-medium mb-2">💬 عبارات أساسية</p>
+                  <ul className="space-y-1 text-sm">
+                    {emergencyData.emergencyPhrases.map((phrase, i) => (
+                      <li key={i} className="flex justify-between bg-slate-50 rounded-lg px-3 py-2">
+                        <span>{phrase.arabic}</span>
+                        <span className="font-medium">{phrase.local}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <p className="font-medium mb-1">💡 نصيحة</p>
+                  <p className="text-sm">{emergencyData.generalTip}</p>
+                </div>
+
+                <button
+                  onClick={closeEmergency}
+                  className="w-full bg-slate-800 text-white py-2 rounded-xl font-medium hover:bg-slate-700 transition"
+                >
+                  إغلاق
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
