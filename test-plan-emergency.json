@@ -1,0 +1,20 @@
+{
+  "projectId": "2a48db23-4d48-4c2c-80f7-ef6cad78521f",
+  "type": "frontend",
+  "name": "Emergency Mode flow",
+  "description": "Test the Emergency Mode feature: user opens the emergency modal, enters a country, and receives emergency contact information",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the homepage" },
+    { "type": "action", "description": "Click the red 'وضع الطوارئ' (Emergency Mode) button" },
+    { "type": "assertion", "description": "Verify a modal opens with fields for country and nationality" },
+    { "type": "action", "description": "Type 'Germany' into the country field" },
+    { "type": "action", "description": "Click the 'احصل على معلومات الطوارئ' submit button" },
+    { "type": "assertion", "description": "Wait for the loading state to finish and verify police, ambulance, and fire numbers are displayed" },
+    { "type": "assertion", "description": "Verify embassy advice, emergency phrases, and a general safety tip are displayed" },
+    { "type": "action", "description": "Click the close button" },
+    { "type": "assertion", "description": "Verify the modal closes" },
+    { "type": "action", "description": "Re-open the emergency modal" },
+    { "type": "action", "description": "Click submit with an empty country field" },
+    { "type": "assertion", "description": "Verify a validation error message appears" }
+  ]
+}
