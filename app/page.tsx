@@ -21,6 +21,11 @@ type EmergencyData = {
   generalTip: string;
 };
 
+type ScamData = {
+  scams: { title: string; description: string; howToAvoid: string }[];
+  generalAdvice: string;
+};
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,6 +41,12 @@ export default function Home() {
   const [emergencyData, setEmergencyData] = useState<EmergencyData | null>(
     null
   );
+
+  const [showScams, setShowScams] = useState(false);
+  const [scamCountry, setScamCountry] = useState("");
+  const [scamLoading, setScamLoading] = useState(false);
+  const [scamError, setScamError] = useState("");
+  const [scamData, setScamData] = useState<ScamData | null>(null);
 
   const handleEmergencySubmit = async () => {
     if (!emergencyCountry.trim()) {
@@ -78,6 +89,45 @@ export default function Home() {
     setEmergencyNationality("");
     setEmergencyData(null);
     setEmergencyError("");
+  };
+
+  const handleScamSubmit = async () => {
+    if (!scamCountry.trim()) {
+      setScamError("من فضلك اكتب اسم الدولة");
+      return;
+    }
+
+    setScamLoading(true);
+    setScamError("");
+    setScamData(null);
+
+    try {
+      const res = await fetch("/api/scam-alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ country: scamCountry }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        setScamError(result.error || "حصل خطأ، حاول تاني");
+        return;
+      }
+
+      setScamData(result.data);
+    } catch {
+      setScamError("حصل خطأ في الاتصال، حاول تاني");
+    } finally {
+      setScamLoading(false);
+    }
+  };
+
+  const closeScams = () => {
+    setShowScams(false);
+    setScamCountry("");
+    setScamData(null);
+    setScamError("");
   };
 
   const handleSubmit = async () => {
@@ -129,7 +179,13 @@ export default function Home() {
       className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 px-4 py-10"
     >
       <div className="max-w-2xl mx-auto">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end gap-2 mb-4">
+          <button
+            onClick={() => setShowScams(true)}
+            className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-amber-600 transition"
+          >
+            ⚠️ تحذيرات النصب
+          </button>
           <button
             onClick={() => setShowEmergency(true)}
             className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-700 transition"
@@ -267,7 +323,9 @@ export default function Home() {
                   disabled={emergencyLoading}
                   className="w-full bg-red-600 text-white py-3 rounded-xl font-medium hover:bg-red-700 transition disabled:opacity-50"
                 >
-                  {emergencyLoading ? "جاري البحث..." : "احصل على معلومات الطوارئ"}
+                  {emergencyLoading
+                    ? "جاري البحث..."
+                    : "احصل على معلومات الطوارئ"}
                 </button>
               </>
             )}
@@ -300,7 +358,10 @@ export default function Home() {
                   <p className="font-medium mb-2">💬 عبارات أساسية</p>
                   <ul className="space-y-1 text-sm">
                     {emergencyData.emergencyPhrases.map((phrase, i) => (
-                      <li key={i} className="flex justify-between bg-slate-50 rounded-lg px-3 py-2">
+                      <li
+                        key={i}
+                        className="flex justify-between bg-slate-50 rounded-lg px-3 py-2"
+                      >
                         <span>{phrase.arabic}</span>
                         <span className="font-medium">{phrase.local}</span>
                       </li>
@@ -315,6 +376,77 @@ export default function Home() {
 
                 <button
                   onClick={closeEmergency}
+                  className="w-full bg-slate-800 text-white py-2 rounded-xl font-medium hover:bg-slate-700 transition"
+                >
+                  إغلاق
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showScams && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          onClick={closeScams}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-amber-600">
+                ⚠️ تحذيرات من النصب
+              </h2>
+              <button
+                onClick={closeScams}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            {!scamData && (
+              <>
+                <input
+                  type="text"
+                  value={scamCountry}
+                  onChange={(e) => setScamCountry(e.target.value)}
+                  placeholder="الدولة اللي هتسافرلها (مثال: تركيا)"
+                  className="w-full p-3 border border-slate-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                {scamError && (
+                  <p className="text-red-500 text-sm mb-2">{scamError}</p>
+                )}
+                <button
+                  onClick={handleScamSubmit}
+                  disabled={scamLoading}
+                  className="w-full bg-amber-500 text-white py-3 rounded-xl font-medium hover:bg-amber-600 transition disabled:opacity-50"
+                >
+                  {scamLoading ? "جاري البحث..." : "اعرض التحذيرات"}
+                </button>
+              </>
+            )}
+
+            {scamData && (
+              <div className="space-y-3 text-slate-700">
+                {scamData.scams.map((scam, i) => (
+                  <div key={i} className="bg-amber-50 rounded-xl p-3">
+                    <p className="font-bold mb-1">⚠️ {scam.title}</p>
+                    <p className="text-sm mb-1">{scam.description}</p>
+                    <p className="text-sm text-green-700">
+                      ✅ {scam.howToAvoid}
+                    </p>
+                  </div>
+                ))}
+                <div className="bg-slate-50 rounded-xl p-3">
+                  <p className="text-sm font-medium">
+                    💡 {scamData.generalAdvice}
+                  </p>
+                </div>
+                <button
+                  onClick={closeScams}
                   className="w-full bg-slate-800 text-white py-2 rounded-xl font-medium hover:bg-slate-700 transition"
                 >
                   إغلاق
