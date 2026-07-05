@@ -1,0 +1,20 @@
+{
+  "projectId": "2a48db23-4d48-4c2c-80f7-ef6cad78521f",
+  "type": "frontend",
+  "name": "Scam Alerts flow",
+  "description": "Test the Scam Alerts feature: user opens the scam alerts modal, enters a country, and receives common scam warnings",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the homepage" },
+    { "type": "action", "description": "Click the amber 'تحذيرات النصب' (Scam Alerts) button" },
+    { "type": "assertion", "description": "Verify a modal opens with a country input field" },
+    { "type": "action", "description": "Type 'Turkey' into the country field" },
+    { "type": "action", "description": "Click the 'اعرض التحذيرات' submit button" },
+    { "type": "assertion", "description": "Wait for the loading state to finish and verify a list of scam warnings is displayed, each with a title, description, and avoidance tip" },
+    { "type": "assertion", "description": "Verify a general advice section is displayed at the end" },
+    { "type": "action", "description": "Click the close button" },
+    { "type": "assertion", "description": "Verify the modal closes" },
+    { "type": "action", "description": "Re-open the scam alerts modal" },
+    { "type": "action", "description": "Click submit with an empty country field" },
+    { "type": "assertion", "description": "Verify a validation error message appears" }
+  ]
+}
