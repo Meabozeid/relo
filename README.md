@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Relo 🧳
 
-## Getting Started
+**مستشارك الشخصي قبل السفر أو الهجرة لأي دولة.**
 
-First, run the development server:
+بدلاً من البحث في عشرات المواقع، يعطيك Relo كل ما تحتاج معرفته قبل السفر أو الهجرة في مكان واحد، مخصص لوضعك الشخصي، بالإضافة لأدوات ذكاء اصطناعي إضافية تساعدك أثناء رحلتك.
+
+🔗 **رابط التطبيق المباشر:** [https://relo-zwci.vercel.app/](https://relo-zwci.vercel.app/)
+
+---
+
+## ✨ الميزات
+
+1. **المساعد الذكي الأساسي** — اكتب وضعك (الجنسية، الوجهة، سبب السفر، الميزانية) واحصل على خطة شاملة: المستندات المطلوبة، الخطوات، تكلفة المعيشة، فتح حساب بنكي، المواصلات، أخطاء شائعة، وقائمة مهام تفاعلية (checkboxes فعلية).
+2. **🚨 وضع الطوارئ** — أرقام الشرطة والإسعاف والمطافئ المحلية، نصائح للوصول للسفارة، وعبارات طوارئ أساسية مترجمة.
+3. **⚠️ تحذيرات من النصب** — أشهر عمليات النصب الشائعة في وجهتك وكيفية تجنبها.
+4. **💰 حاسبة تكلفة الرحلة** — تقدير تكلفة الإقامة، الطعام، المواصلات، والأنشطة حسب الوجهة ومدة الرحلة وأسلوب السفر.
+5. **🗣️ المترجم** — ترجمة فورية للعبارات الشائعة إلى اللغة المحلية مع دليل نطق.
+
+---
+
+## 🛠️ التقنية المستخدمة
+
+- **Frontend + Backend:** Next.js 16 (App Router) + TypeScript + Tailwind CSS
+- **AI:** Google Gemini 2.5 Flash (عبر مكتبة `@google/genai`)
+- **Database:** Supabase (PostgreSQL) — مجهزة للاستخدام المستقبلي
+- **Deployment:** Vercel
+- **Testing:** [TestSprite CLI](https://github.com/testsprite/testsprite-cli) — راجع [`LOOP.md`](./LOOP.md) لسجل كامل لدورات الاختبار (Write → Verify → Fix → Verify)
+
+---
+
+## 🧪 التشغيل محليًا
+
+```bash
+git clone https://github.com/Meabozeid/relo.git
+cd relo
+npm install
+```
+
+أنشئ ملف `.env.local` في جذر المشروع وأضف المفاتيح التالية:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SECRET_KEY=your_supabase_secret_key
+GEMINI_API_KEY=your_gemini_api_key
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+افتح [http://localhost:3000](http://localhost:3000) في المتصفح.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔁 عملية الاختبار (Testing Loop)
 
-## Learn More
+تم بناء هذا المشروع باستخدام حلقة اختبار مستمرة (Write → Verify → Fix → Verify) عبر TestSprite CLI ضد الرابط المباشر (Live URL)، وليس بيئة محلية. للاطلاع على السجل الكامل لكل دورة اختبار، بما في ذلك حالة تم فيها اكتشاف مشكلة وإصلاحها فعليًا، راجع ملف [`LOOP.md`](./LOOP.md).
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📌 عن المشروع
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+تم بناء Relo كمشروع مشاركة في **TestSprite Hackathon Season 3 — Build the Loop**.

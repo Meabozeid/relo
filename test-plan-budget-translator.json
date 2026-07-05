@@ -1,0 +1,19 @@
+{
+  "projectId": "2a48db23-4d48-4c2c-80f7-ef6cad78521f",
+  "type": "frontend",
+  "name": "Budget Calculator and Translator flow",
+  "description": "Test the Budget Calculator and AI Translator features",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to the homepage" },
+    { "type": "action", "description": "Click the green 'حاسبة التكلفة' (Budget Calculator) button" },
+    { "type": "action", "description": "Type 'Paris' as destination, '5' as number of days, and select a travel style" },
+    { "type": "action", "description": "Click the 'احسب التكلفة' submit button" },
+    { "type": "assertion", "description": "Verify accommodation, food, transportation, activities costs and a total are displayed, each including a dollar sign" },
+    { "type": "action", "description": "Close the budget modal" },
+    { "type": "action", "description": "Click the blue 'مترجم' (Translator) button" },
+    { "type": "action", "description": "Type 'أين أقرب مستشفى' as the text and 'Japan' as the target language" },
+    { "type": "action", "description": "Click the 'ترجم' submit button" },
+    { "type": "assertion", "description": "Verify a translation and pronunciation guide are displayed" },
+    { "type": "action", "description": "Close the translator modal" }
+  ]
+}
