@@ -86,3 +86,11 @@
 
 \- Dashboard: https://www.testsprite.com/dashboard/tests/2a48db23-4d48-4c2c-80f7-ef6cad78521f/test/d703a684-61c6-4229-927d-b705b8408e97
 
+
+
+\## Final polish
+
+
+
+Improved loading UX (spinner + reassuring message), added auto-scroll to results after submission, and added text-to-speech playback to the AI Translator feature (using the Web Speech API with AI-provided BCP-47 language codes for accurate pronunciation).
+
