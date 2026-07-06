@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
 {
   "translation": "الترجمة",
   "pronunciation": "طريقة نطق تقريبية بالعربية",
-  "language": "اسم اللغة المستخدمة"
+  "language": "اسم اللغة المستخدمة",
+  "langCode": "كود اللغة بصيغة BCP-47 مثل ja-JP أو de-DE أو fr-FR"
 }
 `;
 

@@ -38,6 +38,7 @@ type TranslatorData = {
   translation: string;
   pronunciation: string;
   language: string;
+  langCode: string;
 };
 
 const NAVY = "#1B2A4A";
@@ -247,7 +248,14 @@ export default function Home() {
       setTranslatorLoading(false);
     }
   };
-
+  const speakTranslation = () => {
+    if (!translatorData) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(translatorData.translation);
+    utterance.lang = translatorData.langCode || "en-US";
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  };
   const closeTranslator = () => {
     setShowTranslator(false);
     setTranslatorText("");
@@ -837,9 +845,18 @@ export default function Home() {
             {translatorData && (
               <div className="space-y-3 text-slate-700">
                 <div className="bg-blue-50 rounded-xl p-4">
-                  <p className="text-xs text-slate-500 mb-1">
-                    الترجمة ({translatorData.language})
-                  </p>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs text-slate-500">
+                      الترجمة ({translatorData.language})
+                    </p>
+                    <button
+                      onClick={speakTranslation}
+                      className="text-blue-600 hover:text-blue-800 transition"
+                      aria-label="استمع للترجمة"
+                    >
+                      🔊
+                    </button>
+                  </div>
                   <p className="font-bold text-lg">
                     {translatorData.translation}
                   </p>
