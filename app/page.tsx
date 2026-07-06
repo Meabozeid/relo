@@ -306,7 +306,7 @@ export default function Home() {
   const featureCards = [
     {
       key: "translator",
-      icon: "🗣️",
+      icon: "🌐",
       label: "المترجم",
       desc: "ترجمة عبارات السفر الأساسية فورًا",
       onClick: () => setShowTranslator(true),
