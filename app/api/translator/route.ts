@@ -10,13 +10,13 @@ export async function POST(req: NextRequest) {
     if (!text || text.trim().length === 0) {
       return NextResponse.json(
         { error: "من فضلك اكتب النص المراد ترجمته" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (!targetLanguage || targetLanguage.trim().length === 0) {
       return NextResponse.json(
         { error: "من فضلك اكتب اللغة أو الدولة المستهدفة" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     console.error("Error translating:", error);
     return NextResponse.json(
       { error: "حصل خطأ أثناء معالجة طلبك، حاول تاني" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

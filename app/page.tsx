@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
+import { useState, useRef, useEffect } from "react";
 type TravelData = {
   documents: string[];
   steps: string[];
@@ -51,14 +50,20 @@ export default function Home() {
   const [data, setData] = useState<TravelData | null>(null);
   const [activeTab, setActiveTab] = useState<string>("steps");
   const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
+  const resultsRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (data && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [data]);
   const [showEmergency, setShowEmergency] = useState(false);
   const [emergencyCountry, setEmergencyCountry] = useState("");
   const [emergencyNationality, setEmergencyNationality] = useState("");
   const [emergencyLoading, setEmergencyLoading] = useState(false);
   const [emergencyError, setEmergencyError] = useState("");
   const [emergencyData, setEmergencyData] = useState<EmergencyData | null>(
-    null
+    null,
   );
 
   const [showScams, setShowScams] = useState(false);
@@ -81,7 +86,7 @@ export default function Home() {
   const [translatorLoading, setTranslatorLoading] = useState(false);
   const [translatorError, setTranslatorError] = useState("");
   const [translatorData, setTranslatorData] = useState<TranslatorData | null>(
-    null
+    null,
   );
 
   const toggleChecklistItem = (index: number) => {
@@ -384,7 +389,14 @@ export default function Home() {
             className="w-full mt-4 text-white py-3.5 rounded-xl font-bold transition disabled:opacity-50 hover:brightness-110"
             style={{ backgroundColor: NAVY }}
           >
-            {loading ? "جاري التحليل..." : "احصل على خطتك"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                جاري تحليل وضعك بالذكاء الاصطناعي...
+              </span>
+            ) : (
+              "احصل على خطتك"
+            )}{" "}
           </button>
         </div>
       </div>
@@ -427,7 +439,10 @@ export default function Home() {
       {/* ===== Results ===== */}
       <div className="max-w-2xl mx-auto px-4 pb-16">
         {data && (
-          <div className="bg-white rounded-2xl shadow-md border border-slate-100 p-6 mt-6">
+          <div
+            ref={resultsRef}
+            className="bg-white rounded-2xl shadow-md border border-slate-100 p-6 mt-6"
+          >
             <div className="flex flex-wrap gap-1 mb-6 border-b border-slate-100">
               {tabs.map((tab) => (
                 <button
@@ -521,9 +536,7 @@ export default function Home() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-red-600">
-                🚨 وضع الطوارئ
-              </h2>
+              <h2 className="text-xl font-bold text-red-600">🚨 وضع الطوارئ</h2>
               <button
                 onClick={closeEmergency}
                 className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
@@ -548,9 +561,7 @@ export default function Home() {
                   className="w-full p-3 border border-slate-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-red-400"
                 />
                 {emergencyError && (
-                  <p className="text-red-500 text-sm mb-2">
-                    {emergencyError}
-                  </p>
+                  <p className="text-red-500 text-sm mb-2">{emergencyError}</p>
                 )}
                 <button
                   onClick={handleEmergencySubmit}
@@ -812,9 +823,7 @@ export default function Home() {
                   className="w-full p-3 border border-slate-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
                 {translatorError && (
-                  <p className="text-red-500 text-sm mb-2">
-                    {translatorError}
-                  </p>
+                  <p className="text-red-500 text-sm mb-2">{translatorError}</p>
                 )}
                 <button
                   onClick={handleTranslatorSubmit}

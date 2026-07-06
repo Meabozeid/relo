@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!country || country.trim().length === 0) {
       return NextResponse.json(
         { error: "من فضلك اكتب اسم الدولة" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     console.error("Error generating emergency info:", error);
     return NextResponse.json(
       { error: "حصل خطأ أثناء معالجة طلبك، حاول تاني" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

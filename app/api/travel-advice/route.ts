@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!userInput || userInput.trim().length === 0) {
       return NextResponse.json(
         { error: "من فضلك اكتب وضعك أولاً" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     console.error("Error generating travel advice:", error);
     return NextResponse.json(
       { error: "حصل خطأ أثناء معالجة طلبك، حاول تاني" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
