@@ -66,3 +66,23 @@
 
 \- Dashboard: https://www.testsprite.com/dashboard/tests/2a48db23-4d48-4c2c-80f7-ef6cad78521f/test/82f0630c-f853-4e74-8fce-7458fd0342e8
 
+
+
+\## Iteration 4
+
+
+
+\*\*Maker:\*\* Added Budget Calculator (`/api/budget-calculator`) and AI Translator (`/api/translator`) features, plus made the existing checklist items interactive (checkbox state now toggles and persists during the session).
+
+
+
+\*\*Checker:\*\* Ran TestSprite CLI against the live deployment with an 11-step plan covering both new features end-to-end.
+
+
+
+\*\*Result:\*\* All 36/36 underlying test steps passed with no functional issues. The run was flagged `blocked` by the platform due to a recurring project-level instruction-scoping quirk (see Iteration 3) — the step-by-step evidence confirms full functional success despite the top-level status label.
+
+\- Run ID: `a8f3a186-a4cf-4dbc-b036-2d96904911b4`
+
+\- Dashboard: https://www.testsprite.com/dashboard/tests/2a48db23-4d48-4c2c-80f7-ef6cad78521f/test/d703a684-61c6-4229-927d-b705b8408e97
+
