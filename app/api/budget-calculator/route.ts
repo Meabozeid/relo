@@ -10,13 +10,13 @@ export async function POST(req: NextRequest) {
     if (!destination || destination.trim().length === 0) {
       return NextResponse.json(
         { error: "من فضلك اكتب اسم الوجهة" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (!days || Number(days) <= 0) {
       return NextResponse.json(
         { error: "من فضلك اكتب عدد أيام صحيح" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     console.error("Error calculating budget:", error);
     return NextResponse.json(
       { error: "حصل خطأ أثناء معالجة طلبك، حاول تاني" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

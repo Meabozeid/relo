@@ -41,6 +41,9 @@ type TranslatorData = {
   language: string;
 };
 
+const NAVY = "#1B2A4A";
+const GOLD = "#EEC41E";
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -84,11 +87,8 @@ export default function Home() {
   const toggleChecklistItem = (index: number) => {
     setCheckedItems((prev) => {
       const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
-      } else {
-        next.add(index);
-      }
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
       return next;
     });
   };
@@ -290,77 +290,161 @@ export default function Home() {
     { key: "checklist", label: "قائمة المهام" },
   ];
 
+  const featureCards = [
+    {
+      key: "translator",
+      icon: "🗣️",
+      label: "المترجم",
+      desc: "ترجمة عبارات السفر الأساسية فورًا",
+      onClick: () => setShowTranslator(true),
+    },
+    {
+      key: "budget",
+      icon: "💰",
+      label: "حاسبة التكلفة",
+      desc: "قدّر ميزانية رحلتك بالكامل",
+      onClick: () => setShowBudget(true),
+    },
+    {
+      key: "scams",
+      icon: "⚠️",
+      label: "تحذيرات النصب",
+      desc: "تجنب أشهر عمليات النصب بوجهتك",
+      onClick: () => setShowScams(true),
+    },
+    {
+      key: "emergency",
+      icon: "🚨",
+      label: "وضع الطوارئ",
+      desc: "أرقام الطوارئ والسفارة فورًا",
+      onClick: () => setShowEmergency(true),
+    },
+  ];
+
   return (
-    <main
-      dir="rtl"
-      className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 px-4 py-10"
-    >
-      <div className="max-w-2xl mx-auto">
-        <div className="flex flex-wrap justify-end gap-2 mb-4">
-          <button
-            onClick={() => setShowTranslator(true)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition"
-          >
-            🗣️ مترجم
-          </button>
-          <button
-            onClick={() => setShowBudget(true)}
-            className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-emerald-700 transition"
-          >
-            💰 حاسبة التكلفة
-          </button>
-          <button
-            onClick={() => setShowScams(true)}
-            className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-amber-600 transition"
-          >
-            ⚠️ تحذيرات النصب
-          </button>
-          <button
-            onClick={() => setShowEmergency(true)}
-            className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-700 transition"
-          >
-            🚨 وضع الطوارئ
-          </button>
+    <main dir="rtl" className="min-h-screen bg-white">
+      {/* ===== Hero Band ===== */}
+      <section
+        className="relative overflow-hidden px-4 pt-14 pb-40"
+        style={{ backgroundColor: NAVY }}
+      >
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, #fff 1.5px, transparent 1.5px)",
+            backgroundSize: "26px 26px",
+          }}
+        />
+        <div className="relative max-w-3xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <svg width="42" height="42" viewBox="0 0 64 64" fill="none">
+              <rect width="64" height="64" rx="16" fill={GOLD} />
+              <circle cx="32" cy="32" r="20" stroke={NAVY} strokeWidth="3" />
+              <path d="M32 20 L38 32 L32 44 L26 32 Z" fill={NAVY} />
+              <circle cx="32" cy="32" r="3" fill={GOLD} />
+            </svg>
+            <span className="text-white text-xl font-bold tracking-wide">
+              Relo
+            </span>
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-5">
+            خطط لسفرك أو هجرتك
+            <br />
+            مع <span style={{ color: GOLD }}>Relo</span>
+          </h1>
+          <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto">
+            مستشارك الشخصي الذكي: كل ما تحتاج معرفته قبل السفر أو الهجرة لأي
+            دولة، في مكان واحد.
+          </p>
         </div>
+      </section>
 
-        <h1 className="text-4xl font-bold text-center text-slate-800 mb-2">
-          Relo
-        </h1>
-        <p className="text-center text-slate-500 mb-8">
-          مستشارك الشخصي قبل السفر أو الهجرة لأي دولة
-        </p>
-
-        <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
+      {/* ===== Floating input card (overlaps hero) ===== */}
+      <div className="max-w-2xl mx-auto px-4 -mt-24 relative z-10">
+        <div className="bg-white rounded-2xl shadow-2xl p-7 border border-slate-100">
+          <label
+            className="text-sm font-bold mb-2 block"
+            style={{ color: NAVY }}
+          >
+            احكيلنا وضعك
+          </label>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="مثال: أنا مصري، سأنتقل إلى ألمانيا كطالب، وميزانيتي 1000 يورو"
-            className="w-full h-28 p-4 border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-slate-400"
+            className="w-full h-28 p-4 border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 transition"
+            style={{ ["--tw-ring-color" as string]: GOLD }}
           />
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full mt-4 bg-slate-800 text-white py-3 rounded-xl font-medium hover:bg-slate-700 transition disabled:opacity-50"
+            className="w-full mt-4 text-white py-3.5 rounded-xl font-bold transition disabled:opacity-50 hover:brightness-110"
+            style={{ backgroundColor: NAVY }}
           >
             {loading ? "جاري التحليل..." : "احصل على خطتك"}
           </button>
         </div>
+      </div>
 
+      {/* ===== Feature cards (services style) ===== */}
+      <section className="max-w-4xl mx-auto px-4 mt-14 mb-4">
+        <div className="text-center mb-8">
+          <p
+            className="text-xs font-bold tracking-[0.2em] mb-2"
+            style={{ color: GOLD }}
+          >
+            أدوات إضافية
+          </p>
+          <h2 className="text-2xl font-extrabold" style={{ color: NAVY }}>
+            كل ما تحتاجه في رحلتك
+          </h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {featureCards.map((card) => (
+            <button
+              key={card.key}
+              onClick={card.onClick}
+              className="group text-center bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+            >
+              <div
+                className="w-14 h-14 mx-auto rounded-full flex items-center justify-center text-2xl mb-3"
+                style={{ backgroundColor: "#FFF7DD" }}
+              >
+                {card.icon}
+              </div>
+              <p className="font-bold mb-1" style={{ color: NAVY }}>
+                {card.label}
+              </p>
+              <p className="text-xs text-slate-400">{card.desc}</p>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== Results ===== */}
+      <div className="max-w-2xl mx-auto px-4 pb-16">
         {data && (
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <div className="flex flex-wrap gap-2 mb-6">
+          <div className="bg-white rounded-2xl shadow-md border border-slate-100 p-6 mt-6">
+            <div className="flex flex-wrap gap-1 mb-6 border-b border-slate-100">
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                    activeTab === tab.key
-                      ? "bg-slate-800 text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
+                  className="px-3 py-3 text-sm font-semibold transition relative"
+                  style={{
+                    color: activeTab === tab.key ? NAVY : "#94A3B8",
+                  }}
                 >
                   {tab.label}
+                  {activeTab === tab.key && (
+                    <span
+                      className="absolute bottom-0 right-0 left-0 h-0.5"
+                      style={{ backgroundColor: GOLD }}
+                    />
+                  )}
                 </button>
               ))}
             </div>
