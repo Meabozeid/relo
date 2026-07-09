@@ -80,7 +80,11 @@ export default function Home() {
   const [budgetLoading, setBudgetLoading] = useState(false);
   const [budgetError, setBudgetError] = useState("");
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
-
+  const [showBooking, setShowBooking] = useState(false);
+  const [bookingDestination, setBookingDestination] = useState("");
+  const [bookingCheckin, setBookingCheckin] = useState("");
+  const [bookingCheckout, setBookingCheckout] = useState("");
+  const [bookingError, setBookingError] = useState("");
   const [showTranslator, setShowTranslator] = useState(false);
   const [translatorText, setTranslatorText] = useState("");
   const [translatorLang, setTranslatorLang] = useState("");
@@ -256,6 +260,46 @@ export default function Home() {
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
   };
+  const closeBooking = () => {
+    setShowBooking(false);
+    setBookingDestination("");
+    setBookingCheckin("");
+    setBookingCheckout("");
+    setBookingError("");
+  };
+
+  const openFlights = () => {
+    if (!bookingDestination.trim()) {
+      setBookingError("من فضلك اكتب اسم الوجهة");
+      return;
+    }
+    setBookingError("");
+    const query = encodeURIComponent(`Flights to ${bookingDestination}`);
+    window.open(`https://www.google.com/travel/flights?q=${query}`, "_blank");
+  };
+
+  const openHotels = () => {
+    if (!bookingDestination.trim()) {
+      setBookingError("من فضلك اكتب اسم الوجهة");
+      return;
+    }
+    setBookingError("");
+    const dest = encodeURIComponent(bookingDestination);
+    let url = `https://www.booking.com/searchresults.html?ss=${dest}`;
+    if (bookingCheckin) url += `&checkin=${bookingCheckin}`;
+    if (bookingCheckout) url += `&checkout=${bookingCheckout}`;
+    window.open(url, "_blank");
+  };
+
+  const openCars = () => {
+    if (!bookingDestination.trim()) {
+      setBookingError("من فضلك اكتب اسم الوجهة");
+      return;
+    }
+    setBookingError("");
+    const dest = encodeURIComponent(bookingDestination);
+    window.open(`https://www.rentalcars.com/search-results?puLocation=${dest}`, "_blank");
+  };
   const closeTranslator = () => {
     setShowTranslator(false);
     setTranslatorText("");
@@ -302,8 +346,14 @@ export default function Home() {
     { key: "commonMistakes", label: "أخطاء شائعة" },
     { key: "checklist", label: "قائمة المهام" },
   ];
-
   const featureCards = [
+    {
+      key: "booking",
+      icon: "🎫",
+      label: "احجز رحلتك",
+      desc: "طيران، فنادق، وتأجير سيارات",
+      onClick: () => setShowBooking(true),
+    },
     {
       key: "translator",
       icon: "🌐",
@@ -796,86 +846,170 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {showTranslator && (
+      {showBooking && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-          onClick={closeTranslator}
+          onClick={closeBooking}
         >
           <div
-            className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto"
+            className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-blue-600">🗣️ مترجم</h2>
+              <h2 className="text-xl font-bold" style={{ color: NAVY }}>
+                🎫 احجز رحلتك
+              </h2>
               <button
-                onClick={closeTranslator}
+                onClick={closeBooking}
                 className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
               >
                 ×
               </button>
             </div>
-            {!translatorData && (
-              <>
-                <textarea
-                  value={translatorText}
-                  onChange={(e) => setTranslatorText(e.target.value)}
-                  placeholder="النص اللي عايز تترجمه (مثال: أين أقرب مستشفى؟)"
-                  className="w-full h-20 p-3 border border-slate-200 rounded-xl mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+
+            <input
+              type="text"
+              value={bookingDestination}
+              onChange={(e) => setBookingDestination(e.target.value)}
+              placeholder="الوجهة (مثال: إسطنبول)"
+              className="w-full p-3 border border-slate-200 rounded-xl mb-3 focus:outline-none focus:ring-2"
+              style={{ ["--tw-ring-color" as string]: GOLD }}
+            />
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <div>
+                <label className="text-xs text-slate-500 mb-1 block">
+                  تاريخ الذهاب
+                </label>
                 <input
-                  type="text"
-                  value={translatorLang}
-                  onChange={(e) => setTranslatorLang(e.target.value)}
-                  placeholder="الدولة أو اللغة المستهدفة (مثال: اليابان)"
-                  className="w-full p-3 border border-slate-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  type="date"
+                  value={bookingCheckin}
+                  onChange={(e) => setBookingCheckin(e.target.value)}
+                  className="w-full p-2.5 border border-slate-200 rounded-xl text-sm"
                 />
-                {translatorError && (
-                  <p className="text-red-500 text-sm mb-2">{translatorError}</p>
-                )}
-                <button
-                  onClick={handleTranslatorSubmit}
-                  disabled={translatorLoading}
-                  className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition disabled:opacity-50"
-                >
-                  {translatorLoading ? "جاري الترجمة..." : "ترجم"}
-                </button>
-              </>
-            )}
-            {translatorData && (
-              <div className="space-y-3 text-slate-700">
-                <div className="bg-blue-50 rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-xs text-slate-500">
-                      الترجمة ({translatorData.language})
-                    </p>
-                    <button
-                      onClick={speakTranslation}
-                      className="text-blue-600 hover:text-blue-800 transition"
-                      aria-label="استمع للترجمة"
-                    >
-                      🔊
-                    </button>
-                  </div>
-                  <p className="font-bold text-lg">
-                    {translatorData.translation}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 mb-1">طريقة النطق</p>
-                  <p className="text-sm">{translatorData.pronunciation}</p>
-                </div>
-                <button
-                  onClick={closeTranslator}
-                  className="w-full bg-slate-800 text-white py-2 rounded-xl font-medium hover:bg-slate-700 transition"
-                >
-                  إغلاق
-                </button>
               </div>
+              <div>
+                <label className="text-xs text-slate-500 mb-1 block">
+                  تاريخ العودة
+                </label>
+                <input
+                  type="date"
+                  value={bookingCheckout}
+                  onChange={(e) => setBookingCheckout(e.target.value)}
+                  className="w-full p-2.5 border border-slate-200 rounded-xl text-sm"
+                />
+              </div>
+            </div>
+
+            {bookingError && (
+              <p className="text-red-500 text-sm mb-2">{bookingError}</p>
             )}
+
+            <div className="space-y-2">
+              <button
+                onClick={openFlights}
+                className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition"
+              >
+                ✈️ ابحث عن رحلات طيران
+              </button>
+              <button
+                onClick={openHotels}
+                className="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition"
+              >
+                🏨 ابحث عن فنادق
+              </button>
+              <button
+                onClick={openCars}
+                className="w-full flex items-center justify-center gap-2 bg-amber-500 text-white py-3 rounded-xl font-medium hover:bg-amber-600 transition"
+              >
+                🚗 ابحث عن تأجير سيارات
+              </button>
+            </div>
+            <p className="text-xs text-slate-400 mt-3 text-center">
+              هيتم فتح نتائج البحث الحقيقية في تاب جديد
+            </p>
           </div>
         </div>
       )}
+
+      {showTranslator && (
+          <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            onClick={closeTranslator}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-blue-600">🗣️ مترجم</h2>
+                <button
+                  onClick={closeTranslator}
+                  className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+                >
+                  ×
+                </button>
+              </div>
+              {!translatorData && (
+                <>
+                  <textarea
+                    value={translatorText}
+                    onChange={(e) => setTranslatorText(e.target.value)}
+                    placeholder="النص اللي عايز تترجمه (مثال: أين أقرب مستشفى؟)"
+                    className="w-full h-20 p-3 border border-slate-200 rounded-xl mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  <input
+                    type="text"
+                    value={translatorLang}
+                    onChange={(e) => setTranslatorLang(e.target.value)}
+                    placeholder="الدولة أو اللغة المستهدفة (مثال: اليابان)"
+                    className="w-full p-3 border border-slate-200 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  {translatorError && (
+                    <p className="text-red-500 text-sm mb-2">{translatorError}</p>
+                  )}
+                  <button
+                    onClick={handleTranslatorSubmit}
+                    disabled={translatorLoading}
+                    className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                  >
+                    {translatorLoading ? "جاري الترجمة..." : "ترجم"}
+                  </button>
+                </>
+              )}
+              {translatorData && (
+                <div className="space-y-3 text-slate-700">
+                  <div className="bg-blue-50 rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-xs text-slate-500">
+                        الترجمة ({translatorData.language})
+                      </p>
+                      <button
+                        onClick={speakTranslation}
+                        className="text-blue-600 hover:text-blue-800 transition"
+                        aria-label="استمع للترجمة"
+                      >
+                        🔊
+                      </button>
+                    </div>
+                    <p className="font-bold text-lg">
+                      {translatorData.translation}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500 mb-1">طريقة النطق</p>
+                    <p className="text-sm">{translatorData.pronunciation}</p>
+                  </div>
+                  <button
+                    onClick={closeTranslator}
+                    className="w-full bg-slate-800 text-white py-2 rounded-xl font-medium hover:bg-slate-700 transition"
+                  >
+                    إغلاق
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
     </main>
   );
 }
